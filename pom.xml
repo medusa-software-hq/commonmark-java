@@ -16,6 +16,7 @@
     <modules>
         <module>commonmark</module>
         <module>commonmark-ext-autolink</module>
+        <module>commonmark-ext-cc</module>
         <module>commonmark-ext-footnotes</module>
         <module>commonmark-ext-gfm-alerts</module>
         <module>commonmark-ext-gfm-strikethrough</module>
@@ -126,6 +127,11 @@
             <dependency>
                 <groupId>org.commonmark</groupId>
                 <artifactId>commonmark-ext-autolink</artifactId>
+                <version>0.28.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark-ext-cc</artifactId>
                 <version>0.28.1-SNAPSHOT</version>
             </dependency>
             <dependency>
