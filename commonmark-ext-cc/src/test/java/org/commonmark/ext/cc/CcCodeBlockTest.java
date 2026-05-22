@@ -15,6 +15,8 @@ public class CcCodeBlockTest extends RenderingTestCase {
 
     private static final char STX = '\u0002';
     private static final char ETX = '\u0003';
+    private static final char SO = '\u000e';
+    private static final char SI = '\u000f';
 
     private static final Set<Extension> EXTENSIONS = Set.of(CcExtension.create());
     private static final Parser PARSER = Parser.builder().extensions(EXTENSIONS).build();
@@ -28,6 +30,46 @@ public class CcCodeBlockTest extends RenderingTestCase {
         CcCodeBlock codeBlock = (CcCodeBlock) document.getFirstChild();
         assertThat(codeBlock.getLiteral()).isEqualTo("code\n");
         assertRendering(input, "<pre><code>code\n</code></pre>\n");
+    }
+
+    @Test
+    public void inlineCode() {
+        String input = "before " + SO + "foo" + SI + " after";
+
+        Node document = PARSER.parse(input);
+        CcInlineCode inlineCode = (CcInlineCode) document.getFirstChild().getFirstChild().getNext();
+        assertThat(inlineCode.getLiteral()).isEqualTo("foo");
+        assertRendering(input, "<p>before <code>foo</code> after</p>\n");
+    }
+
+    @Test
+    public void emptyInlineCode() {
+        assertRendering("x " + SO + SI + " y", "<p>x <code></code> y</p>\n");
+    }
+
+    @Test
+    public void unmatchedOpeningInlineCodeFallsBackToLiteralText() {
+        assertRendering("x " + SO + "foo", "<p>x " + SO + "foo</p>\n");
+    }
+
+    @Test
+    public void inlineCodeCanContainBackticks() {
+        assertRendering("x " + SO + "`foo`" + SI + " y", "<p>x <code>`foo`</code> y</p>\n");
+    }
+
+    @Test
+    public void regularBackticksStillWork() {
+        assertRendering("x `foo` y", "<p>x <code>foo</code> y</p>\n");
+    }
+
+    @Test
+    public void inlineCodeInsideCcBlockStaysLiteral() {
+        String input = STX + "\n" + SO + "foo" + SI + "\n" + ETX;
+
+        Node document = PARSER.parse(input);
+        CcCodeBlock codeBlock = (CcCodeBlock) document.getFirstChild();
+        assertThat(codeBlock.getLiteral()).isEqualTo(SO + "foo" + SI + "\n");
+        assertRendering(input, "<pre><code>" + SO + "foo" + SI + "\n</code></pre>\n");
     }
 
     @Test

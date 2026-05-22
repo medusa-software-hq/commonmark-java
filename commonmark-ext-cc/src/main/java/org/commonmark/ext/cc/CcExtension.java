@@ -3,6 +3,7 @@ package org.commonmark.ext.cc;
 import org.commonmark.Extension;
 import org.commonmark.ext.cc.internal.CcCodeBlockParser;
 import org.commonmark.ext.cc.internal.CcHtmlNodeRenderer;
+import org.commonmark.ext.cc.internal.CcInlineCodeParser;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
@@ -21,6 +22,7 @@ public class CcExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRen
     @Override
     public void extend(Parser.Builder parserBuilder) {
         parserBuilder.customBlockParserFactory(new CcCodeBlockParser.Factory());
+        parserBuilder.customInlineContentParserFactory(new CcInlineCodeParser.Factory());
     }
 
     @Override

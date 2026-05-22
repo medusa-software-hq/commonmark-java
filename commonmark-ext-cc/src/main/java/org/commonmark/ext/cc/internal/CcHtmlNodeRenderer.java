@@ -1,6 +1,7 @@
 package org.commonmark.ext.cc.internal;
 
 import org.commonmark.ext.cc.CcCodeBlock;
+import org.commonmark.ext.cc.CcInlineCode;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
@@ -21,19 +22,26 @@ public class CcHtmlNodeRenderer implements NodeRenderer {
 
     @Override
     public Set<Class<? extends Node>> getNodeTypes() {
-        return Set.of(CcCodeBlock.class);
+        return Set.of(CcCodeBlock.class, CcInlineCode.class);
     }
 
     @Override
     public void render(Node node) {
-        CcCodeBlock ccCodeBlock = (CcCodeBlock) node;
-        html.line();
-        html.tag("pre", getAttrs(ccCodeBlock, "pre"));
-        html.tag("code", getAttrs(ccCodeBlock, "code"));
-        html.text(ccCodeBlock.getLiteral());
-        html.tag("/code");
-        html.tag("/pre");
-        html.line();
+        if (node instanceof CcCodeBlock) {
+            CcCodeBlock ccCodeBlock = (CcCodeBlock) node;
+            html.line();
+            html.tag("pre", getAttrs(ccCodeBlock, "pre"));
+            html.tag("code", getAttrs(ccCodeBlock, "code"));
+            html.text(ccCodeBlock.getLiteral());
+            html.tag("/code");
+            html.tag("/pre");
+            html.line();
+        } else if (node instanceof CcInlineCode) {
+            CcInlineCode ccInlineCode = (CcInlineCode) node;
+            html.tag("code", getAttrs(ccInlineCode, "code"));
+            html.text(ccInlineCode.getLiteral());
+            html.tag("/code");
+        }
     }
 
     private Map<String, String> getAttrs(Node node, String tagName) {
