@@ -40,6 +40,7 @@ jobs:
         run: mvn -B -Pcoverage clean test jacoco:report-aggregate
 
       - name: Publish coverage
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
         uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
